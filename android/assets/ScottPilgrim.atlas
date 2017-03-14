@@ -1,0 +1,117 @@
+
+ScottPilgrim.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+1
+  rotate: false
+  xy: 1, 123
+  size: 86, 120
+  orig: 86, 120
+  offset: 0, 0
+  index: -1
+13
+  rotate: false
+  xy: 89, 143
+  size: 106, 100
+  orig: 106, 100
+  offset: 0, 0
+  index: -1
+14
+  rotate: false
+  xy: 1, 1
+  size: 86, 120
+  orig: 86, 120
+  offset: 0, 0
+  index: -1
+2
+  rotate: false
+  xy: 89, 41
+  size: 106, 100
+  orig: 106, 100
+  offset: 0, 0
+  index: -1
+6
+  rotate: false
+  xy: 197, 141
+  size: 100, 102
+  orig: 100, 102
+  offset: 0, 0
+  index: -1
+9
+  rotate: false
+  xy: 299, 141
+  size: 100, 102
+  orig: 100, 102
+  offset: 0, 0
+  index: -1
+12
+  rotate: false
+  xy: 401, 141
+  size: 92, 102
+  orig: 92, 102
+  offset: 0, 0
+  index: -1
+3
+  rotate: false
+  xy: 495, 141
+  size: 92, 102
+  orig: 92, 102
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 589, 139
+  size: 92, 104
+  orig: 92, 104
+  offset: 0, 0
+  index: -1
+8
+  rotate: false
+  xy: 683, 139
+  size: 92, 104
+  orig: 92, 104
+  offset: 0, 0
+  index: -1
+10
+  rotate: false
+  xy: 777, 125
+  size: 82, 118
+  orig: 82, 118
+  offset: 0, 0
+  index: -1
+5
+  rotate: false
+  xy: 861, 125
+  size: 82, 118
+  orig: 82, 118
+  offset: 0, 0
+  index: -1
+11
+  rotate: false
+  xy: 945, 139
+  size: 78, 104
+  orig: 78, 104
+  offset: 0, 0
+  index: -1
+4
+  rotate: false
+  xy: 945, 33
+  size: 78, 104
+  orig: 78, 104
+  offset: 0, 0
+  index: -1
+0
+  rotate: false
+  xy: 197, 33
+  size: 74, 106
+  orig: 74, 106
+  offset: 0, 0
+  index: -1
+15
+  rotate: false
+  xy: 273, 33
+  size: 74, 106
+  orig: 74, 106
+  offset: 0, 0
+  index: -1
