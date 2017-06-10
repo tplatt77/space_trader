@@ -1,53 +1,61 @@
-package com.mygdx.spacetrader.vehicle;
+package com.mygdx.spacetrader.sprite;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.Array;
+import com.mygdx.spacetrader.asteroid.Asteroid;
+
+import java.util.Comparator;
+
 /**
- * Created by Gator King on 2/20/2017.
+ * Created by Gator King on 3/14/2017.
  */
 
-public class Vehicle {
+public class StationarySprite {
+
+
+    private static final float WORLD_TO_SCREEN = 1.0f / 100.0f;
+    private static final float SCENE_WIDTH = 12.80f;
+    private static final float SCENE_HEIGHT = 7.20f;
+    private static final float FRAME_DURATION = 1.0f / 20.0f;
+
     private String name;
-    private double hitpoints;
-    private double speed;
     private Texture image;
     private Sprite sprite;
     private Vector2 position;
 
-    public Vehicle() {
+    public StationarySprite() {
 
     }
 
-    public Vehicle(String name) {
+    public StationarySprite(String name) {
         this.name = name;
     }
 
-    public Vehicle(Vehicle vehicle) {
-        this.name = vehicle.getName();
-        this.hitpoints = vehicle.getHitpoints();
-        this.speed = vehicle.getSpeed();
-        this.image = vehicle.getImage();
-        this.sprite = vehicle.getSprite();
-        this.position = vehicle.getPosition();
+    public StationarySprite(StationarySprite stationarySprite) {
+        this.name = stationarySprite.getName();
+        this.image = stationarySprite.getImage();
+        this.sprite = stationarySprite.getSprite();
+        this.position = stationarySprite.getPosition();
     }
 
-    public Vehicle(String name, double hitpoints, double speed, Texture image, Sprite sprite,
-                   Vector2 position) {
+    public StationarySprite(String name,Texture image, Sprite sprite,
+                            Vector2 position) {
         this.name = name;
-        this.hitpoints = hitpoints;
-        this.speed = speed;
         this.image = image;
         this.sprite = sprite;
         this.position = position;
+
+        // Set the position
+        this.getSprite().setPosition(position.x, position.y);
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -55,22 +63,6 @@ public class Vehicle {
 
     public String getName() {
         return name;
-    }
-
-    public double getHitpoints() {
-        return hitpoints;
-    }
-
-    public void setHitpoints(double hitpoints) {
-        this.hitpoints = hitpoints;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public Texture getImage() {
@@ -111,9 +103,12 @@ public class Vehicle {
 
     public void draw(SpriteBatch batch) {
         sprite.draw(batch);
+
     }
 
     public void dispose() {
         getImage().dispose();
     }
+
+
 }

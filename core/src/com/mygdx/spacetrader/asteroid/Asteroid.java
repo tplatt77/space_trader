@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.spacetrader.SpaceTrader;
+import com.mygdx.spacetrader.sprite.AnimatedSprite;
 import com.mygdx.spacetrader.vehicle.Vehicle;
 
 import java.util.Comparator;
@@ -18,7 +18,7 @@ import java.util.Comparator;
  * Created by Gator King on 3/11/2017.
  */
 
-public class Asteroid {
+public class Asteroid extends AnimatedSprite {
 
 
     private static final float WORLD_TO_SCREEN = 1.0f / 100.0f;
@@ -35,6 +35,8 @@ public class Asteroid {
 
     private TextureAtlas asteroidAtlas;
     private Animation asteroidAnimation;
+    private Vector2 size;
+    private Vector2 origin;
 
     public Asteroid() {
 
@@ -45,17 +47,9 @@ public class Asteroid {
     }
 
     public Asteroid(Asteroid asteroid) {
-        this.name = asteroid.getName();
-        this.hitpoints = asteroid.getHitpoints();
+        super(asteroid);
         this.speed = asteroid.getSpeed();
-        this.image = asteroid.getImage();
-        this.sprite = asteroid.getSprite();
-        this.position = asteroid.getPosition();
-        this.asteroidAtlas = new TextureAtlas(Gdx.files.internal("asteroid.atlas"));
-        Array<TextureAtlas.AtlasRegion> asteroidRegions = new Array<TextureAtlas.AtlasRegion>(asteroidAtlas.getRegions());
-        asteroidRegions.sort(new RegionComparator());
-        this.asteroidAnimation = new Animation(FRAME_DURATION, asteroidRegions,
-                Animation.PlayMode.LOOP);
+        this.hitpoints = asteroid.getHitpoints();
     }
 
     public Asteroid(String name, double hitpoints, double speed, Texture image, Sprite sprite,
@@ -73,15 +67,6 @@ public class Asteroid {
                 Animation.PlayMode.LOOP);
     }
 
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public double getHitpoints() {
         return hitpoints;
     }
@@ -94,44 +79,12 @@ public class Asteroid {
         return speed;
     }
 
+    public Vector2 getSize() {return size;}
+
+    public Vector2 getOrigin() {return origin;}
+
     public void setSpeed(double speed) {
         this.speed = speed;
-    }
-
-    public Texture getImage() {
-        return image;
-    }
-
-    public void setImage(Texture image) {
-        this.image = image;
-    }
-
-    public Sprite getSprite() {
-        return sprite;
-    }
-
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position = position;
-    }
-
-    public void setSpriteToPosition() {
-        sprite.setPosition(position.x, position.y);
-    }
-
-    public void setSpriteToPosition(Vector2 newPosition) {
-        sprite.setPosition(newPosition.x, newPosition.y);
-    }
-
-    public void setSpriteToPosition(float x, float y) {
-        sprite.setPosition(x, y);
     }
 
     public void draw(SpriteBatch batch, float animationTime) {
@@ -139,8 +92,10 @@ public class Asteroid {
         TextureRegion asteroidFrame = asteroidAnimation.getKeyFrame(animationTime);
         int width = asteroidFrame.getRegionWidth();
         int height = asteroidFrame.getRegionHeight();
+        this.size = new Vector2 (width, height);
         float originX = width * 0.5f;
         float originY = height * 0.5f;
+        this.origin = new Vector2 ( originX, originY);
 
         batch.draw(asteroidFrame,
                 1.0f - originX, 3.70f - originY,
@@ -152,11 +107,7 @@ public class Asteroid {
        batch.draw(asteroidAnimation.getKeyFrame(animationTime % 5), position.x, 275.0f);
 
     }
-
-    public void dispose() {
-        getImage().dispose();
-    }
-
+    
     private static class RegionComparator implements Comparator<TextureAtlas.AtlasRegion> {
         @Override
         public int compare(TextureAtlas.AtlasRegion region1, TextureAtlas.AtlasRegion region2) {

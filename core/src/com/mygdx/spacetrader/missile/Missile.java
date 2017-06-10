@@ -3,7 +3,9 @@ package com.mygdx.spacetrader.missile;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.spacetrader.asteroid.Asteroid;
 
 /**
  * Created by Gator King on 2/25/2017.
@@ -96,6 +98,27 @@ public class Missile {
         position.y += 2.0f * Math.sin(rotationAngleRadians);
         sprite.setPosition(position.x, position.y);
 
+    }
+
+    /**
+     * Simple collision check with asteroid
+     * @param asteroid
+     * @return
+     */
+    public boolean checkCollision(Asteroid asteroid) {
+        boolean collision = false;
+        Rectangle asteroidBoundingBox = new Rectangle();
+        Vector2 asteroidOrigin = asteroid.getOrigin();
+        Vector2 asteroidSize = asteroid.getSize();
+        asteroidBoundingBox.set(asteroidOrigin.x, asteroidOrigin.y,
+                asteroidSize.x/2, asteroidSize.y/2);
+        Rectangle thisBoundingBox = this.getSprite().getBoundingRectangle();
+        if(thisBoundingBox.overlaps(asteroidBoundingBox))
+        {
+            collision = true;
+        }
+
+        return collision;
     }
 
 }
