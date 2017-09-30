@@ -156,4 +156,16 @@ public class AnimatedSprite {
         }
     }
 
+    public float getX() {
+        return sprite.getX();
+    }
+    public float getY() {
+        return sprite.getY();
+    }
+    public float getWidth() {
+        return sprite.getWidth();
+    }
+    public float getHeight() {
+        return sprite.getHeight();
+    }
 }

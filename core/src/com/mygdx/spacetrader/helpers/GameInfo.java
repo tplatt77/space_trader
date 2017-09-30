@@ -14,4 +14,5 @@ public class GameInfo {
     public static final short PLAYER = 2;
     public static final short COLLECTABLE = 4;
     public static final short DESTROYED = 6;
+    public static final short ASTEROID = 7;
 }

@@ -8,7 +8,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.spacetrader.helpers.GameInfo;
 import com.mygdx.spacetrader.sprite.AnimatedSprite;
 import com.mygdx.spacetrader.vehicle.Vehicle;
 
@@ -33,13 +40,15 @@ public class Asteroid extends AnimatedSprite {
     private Sprite sprite;
     private Vector2 position;
 
+    private Body body;
+    private World world;
+
     private TextureAtlas asteroidAtlas;
     private Animation asteroidAnimation;
     private Vector2 size;
     private Vector2 origin;
 
     public Asteroid() {
-
     }
 
     public Asteroid(String name) {
@@ -50,21 +59,52 @@ public class Asteroid extends AnimatedSprite {
         super(asteroid);
         this.speed = asteroid.getSpeed();
         this.hitpoints = asteroid.getHitpoints();
+        createBody();
     }
 
     public Asteroid(String name, double hitpoints, double speed, Texture image, Sprite sprite,
-                    Vector2 position) {
+                    Vector2 position, World world) {
         this.name = name;
         this.hitpoints = hitpoints;
         this.speed = speed;
         this.image = image;
         this.sprite = sprite;
+        super.setSprite(sprite);
         this.position = position;
         this.asteroidAtlas = new TextureAtlas(Gdx.files.internal("asteroid.atlas"));
         Array<TextureAtlas.AtlasRegion> asteroidRegions = new Array<TextureAtlas.AtlasRegion>(asteroidAtlas.getRegions());
         asteroidRegions.sort(new RegionComparator());
         this.asteroidAnimation = new Animation(FRAME_DURATION, asteroidRegions,
                 Animation.PlayMode.LOOP);
+        this.world = world;
+    }
+
+    private void createBody() {
+
+        BodyDef bodyDef = new BodyDef();
+
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(getX() / GameInfo.PPM, getY() / GameInfo.PPM);
+
+        body = world.createBody(bodyDef);
+        body.setFixedRotation(true);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((getWidth() / 2f - 20f) / GameInfo.PPM,
+                (getHeight() / 2f) / GameInfo.PPM);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0f;
+        fixtureDef.friction = 2f;
+        fixtureDef.filter.categoryBits = GameInfo.ASTEROID;
+        fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.PLAYER;
+
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData("Asteroid");
+
+        shape.dispose();
+
     }
 
     public double getHitpoints() {
