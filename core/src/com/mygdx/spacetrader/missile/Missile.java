@@ -5,7 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.spacetrader.asteroid.Asteroid;
+import com.mygdx.spacetrader.helpers.GameInfo;
 
 /**
  * Created by Gator King on 2/25/2017.
@@ -20,20 +28,24 @@ public class Missile {
     private Vector2 position;
     private double rotationAngle;
 
-    public Missile() {
+    private World world;
+    private Body body;
 
-    }
-
-    public Missile(Missile missile) {
+    public Missile(Missile missile, World world) {
         this.name = missile.getName();
         this.hitpoints = missile.getHitpoints();
         this.speed = missile.getSpeed();
         this.image = missile.getImage();
         this.sprite = missile.getSprite();
         this.position = missile.getPosition();
+        this.world = world;
+
+        createBody();
     }
 
-    public Missile(String name, double hitpoints, double speed, Texture image, Sprite sprite, Vector2 position, double rotationAngle) {
+    public Missile(String name, double hitpoints, double speed,
+                   Texture image, Sprite sprite, Vector2 position,
+                   double rotationAngle, World world) {
         this.name = name;
         this.hitpoints = hitpoints;
         this.speed = speed;
@@ -41,6 +53,9 @@ public class Missile {
         this.sprite = sprite;
         this.position = position;
         this.rotationAngle = rotationAngle;
+
+        this.world = world;
+        createBody();
     }
 
     public String getName() {
@@ -97,7 +112,34 @@ public class Missile {
         position.x += 2.0f * Math.cos(rotationAngleRadians);
         position.y += 2.0f * Math.sin(rotationAngleRadians);
         sprite.setPosition(position.x, position.y);
+        body.setLinearVelocity(position.x, position.y);
+    }
 
+    private void createBody() {
+
+        BodyDef bodyDef = new BodyDef();
+
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.position.set(getX() / GameInfo.PPM, getY() / GameInfo.PPM);
+
+        body = world.createBody(bodyDef);
+        body.setFixedRotation(true);
+        body.setActive(false);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((getWidth() / 2f - 20f) / GameInfo.PPM,
+                (getHeight() / 2f) / GameInfo.PPM);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0f;
+        fixtureDef.friction = 2f;
+        fixtureDef.filter.categoryBits = GameInfo.PLAYER;
+        fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE | GameInfo.ASTEROID;
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData("Player");
+
+        shape.dispose();
     }
 
     /**
@@ -119,6 +161,22 @@ public class Missile {
         }
 
         return collision;
+    }
+
+    public float getX() {
+        return position.x;
+    }
+
+    public float getY() {
+        return position.y;
+    }
+
+    public float getWidth() {
+        return sprite.getWidth();
+    }
+
+    public float getHeight() {
+        return sprite.getHeight();
     }
 
 }

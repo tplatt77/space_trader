@@ -1,5 +1,6 @@
 package com.mygdx.spacetrader.asteroid;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -77,28 +79,39 @@ public class Asteroid extends AnimatedSprite {
         this.asteroidAnimation = new Animation(FRAME_DURATION, asteroidRegions,
                 Animation.PlayMode.LOOP);
         this.world = world;
+        createBody();
     }
 
     private void createBody() {
-
         BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
 
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(getX() / GameInfo.PPM, getY() / GameInfo.PPM);
+        // Retrieve width and height
+        TextureRegion asteroidFrame = asteroidAnimation.getKeyFrame(0);
+        int asteroidWidth = asteroidFrame.getRegionWidth();
+        int asteroidHeight = asteroidFrame.getRegionHeight();
+        float originX = asteroidWidth * 0.5f;
+        float originY = asteroidHeight * 0.5f;
+
+        bodyDef.position.set((position.x + originX) / GameInfo.PPM,
+                (position.y + originY) / GameInfo.PPM);
+//        bodyDef.position.set(position.x, position.y);
 
         body = world.createBody(bodyDef);
-        body.setFixedRotation(true);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((getWidth() / 2f - 20f) / GameInfo.PPM,
-                (getHeight() / 2f) / GameInfo.PPM);
+        shape.setAsBox((asteroidWidth  / 2f)/ GameInfo.PPM,
+                ((asteroidHeight) / 2f )/ GameInfo.PPM);
+
+        CircleShape circle = new CircleShape();
+        if(this.origin != null) {
+            circle.setPosition(this.origin);
+        }
+        circle.setRadius(32f / GameInfo.PPM);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 0f;
-        fixtureDef.friction = 2f;
+        fixtureDef.shape = circle;
         fixtureDef.filter.categoryBits = GameInfo.ASTEROID;
-        fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.PLAYER;
 
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData("Asteroid");
@@ -127,6 +140,11 @@ public class Asteroid extends AnimatedSprite {
         this.speed = speed;
     }
 
+    public void drawAsteroid(SpriteBatch batch) {
+        batch.draw(this.getSprite(), getX() + getWidth() / 2f ,
+                getY() - getHeight() / 2f);
+    }
+
     public void draw(SpriteBatch batch, float animationTime) {
         //sprite.draw(batch);
         TextureRegion asteroidFrame = asteroidAnimation.getKeyFrame(animationTime);
@@ -144,7 +162,7 @@ public class Asteroid extends AnimatedSprite {
                 WORLD_TO_SCREEN, WORLD_TO_SCREEN,
                 0.0f);
 
-       batch.draw(asteroidAnimation.getKeyFrame(animationTime % 5), position.x, 275.0f);
+       batch.draw(asteroidAnimation.getKeyFrame(animationTime % 5), position.x, position.y);
 
     }
     

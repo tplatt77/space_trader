@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -54,18 +56,20 @@ public class Player extends Sprite {
         shape.setAsBox((getWidth() / 2f - 20f) / GameInfo.PPM,
                 (getHeight() / 2f) / GameInfo.PPM);
 
+        CircleShape circle = new CircleShape();
+        circle.setRadius(6f);
+
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0f;
         fixtureDef.friction = 2f;
         fixtureDef.filter.categoryBits = GameInfo.PLAYER;
         fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE | GameInfo.ASTEROID;
-
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData("Player");
 
         shape.dispose();
-
+        circle.dispose();
     }
 
     public void movePlayer(float x, float y) {
@@ -84,11 +88,9 @@ public class Player extends Sprite {
 
     }
 
-    public void drawPlayerIdle(SpriteBatch batch) {
-        if(!isWalking) {
-            batch.draw(this, getX() + getWidth() / 2f - 20,
+    public void drawPlayer(SpriteBatch batch) {
+            batch.draw(this, getX() - getWidth() / 2f,
                     getY() - getHeight() / 2f);
-        }
     }
 
     public void drawPlayerAnimation(SpriteBatch batch) {

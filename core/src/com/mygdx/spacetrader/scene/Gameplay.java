@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -26,6 +28,8 @@ import com.mygdx.spacetrader.helpers.GameInfo;
 import com.mygdx.spacetrader.helpers.GameManager;
 import com.mygdx.spacetrader.missile.Missile;
 import com.mygdx.spacetrader.player.Player;
+
+import javax.swing.JOptionPane;
 
 /**
  * Created by Gator King on 6/4/2017.
@@ -90,12 +94,12 @@ public class Gameplay implements Screen, ContactListener {
         Texture missileTexture = new Texture("missile.png");
         Sprite missileSprite = new Sprite(missileTexture);
         missile = new Missile("Le Missile", 15.0, 5.0, missileTexture, missileSprite, new Vector2 (-1, -1),
-            0.0);
+            0.0, world);
 
         Texture asteroidTexture = new Texture("asteroid.png");
         Sprite asteroidSprite = new Sprite(asteroidTexture);
         asteroid = new Asteroid("AX7-One", 500.0 , 0.0 , asteroidTexture, asteroidSprite,
-                new Vector2(300, 100), world);
+                new Vector2(250, 200), world);
 
         createBackgrounds();
 
@@ -108,7 +112,33 @@ public class Gameplay implements Screen, ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
+        Fixture body1, body2;
+        System.out.println("beginContact() called");
 
+        if(contact.getFixtureA().getUserData() == "Player") {
+            body1 = contact.getFixtureA();
+            body2 = contact.getFixtureB();
+        } else {
+            body1 = contact.getFixtureB();
+            body2 = contact.getFixtureA();
+        }
+
+        if(body1.getUserData() == "Player" && body2.getUserData() == "Coin") {
+            coinSound.play();
+            body2.setUserData("Remove");
+        }
+
+        if(body1.getUserData() == "Player" && body2.getUserData() == "Asteroid") {
+            body1.getBody().setLinearVelocity(0, 0);
+            body2.setUserData("Remove");
+
+        }
+
+        if(body1.getUserData() == "Player" && body2.getUserData() == "Dark Cloud") {
+            if(!player.isDead()) {
+                playedDied();
+            }
+        }
     }
 
     @Override
@@ -150,14 +180,15 @@ public class Gameplay implements Screen, ContactListener {
             missile.draw(game.getBatch());
         }
 
-        asteroid.draw(game.getBatch(), 1.0f);
+        asteroid.draw(game.getBatch(), delta);
+        //asteroid.drawAsteroid(game.getBatch());
 
-        player.draw(game.getBatch());
+        player.drawPlayer(game.getBatch());
 
 
         game.getBatch().end();
 
-//        debugRenderer.render(world, box2DCamera.combined);
+        debugRenderer.render(world, box2DCamera.combined);
 
        // game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
         //hud.getStage().draw();
