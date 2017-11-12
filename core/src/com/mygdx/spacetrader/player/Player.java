@@ -85,7 +85,6 @@ public class Player extends Sprite {
         isWalking = true;
 
         body.setLinearVelocity(x, y);
-
     }
 
     public void drawPlayer(SpriteBatch batch) {

@@ -29,6 +29,9 @@ import com.mygdx.spacetrader.helpers.GameManager;
 import com.mygdx.spacetrader.missile.Missile;
 import com.mygdx.spacetrader.player.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -59,7 +62,10 @@ public class Gameplay implements Screen, ContactListener {
     private Player player;
     private float lastPlayerY;
 
-    private Missile missile;
+    //private Missile missile;
+    Texture missileTexture;
+    Sprite missileSprite;
+    private List<Missile> missiles;
     private boolean missileFired = false;
 
     private Asteroid asteroid;
@@ -88,18 +94,19 @@ public class Gameplay implements Screen, ContactListener {
         //cloudsController = new CloudsController(world);
 
         //player = cloudsController.positionThePlayer(player);
-        player = new Player(world, GameInfo.WIDTH /2.0f, GameInfo.HEIGHT / 50.0f);
+        player = new Player(world, GameInfo.WIDTH /2.0f, GameInfo.HEIGHT / 2.0f);
 
         // Create the missile
-        Texture missileTexture = new Texture("missile.png");
-        Sprite missileSprite = new Sprite(missileTexture);
-        missile = new Missile("Le Missile", 15.0, 5.0, missileTexture, missileSprite, new Vector2 (-1, -1),
-            0.0, world);
+        missileTexture = new Texture("missile.png");
+        missileSprite = new Sprite(missileTexture);
+        //missile = new Missile("Le Missile", 15.0, 5.0, missileTexture, missileSprite, new Vector2 (-1, -1),
+        //    0.0, world);
+        missiles = new ArrayList<Missile>();
 
         Texture asteroidTexture = new Texture("asteroid.png");
         Sprite asteroidSprite = new Sprite(asteroidTexture);
         asteroid = new Asteroid("AX7-One", 500.0 , 0.0 , asteroidTexture, asteroidSprite,
-                new Vector2(250, 200), world);
+                new Vector2(250, 600), world);
 
         createBackgrounds();
 
@@ -176,10 +183,9 @@ public class Gameplay implements Screen, ContactListener {
         //cloudsController.drawClouds(game.getBatch());
         //cloudsController.drawCollectables(game.getBatch());
 
-        if(missileFired) {
+        for(Missile missile : missiles) {
             missile.draw(game.getBatch());
         }
-
         asteroid.draw(game.getBatch(), delta);
         //asteroid.drawAsteroid(game.getBatch());
 
@@ -295,8 +301,9 @@ public class Gameplay implements Screen, ContactListener {
         // Missile firing
 
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            missileFired = true;
-            missile.setPosition(new Vector2 (player.getX(), player.getY()));
+            Missile missile = new Missile("Le Missile", 15.0, 5.0, missileTexture, missileSprite,
+                    new Vector2 (player.getX(), player.getY()), 0.0, world);
+            missiles.add(missile);
         }
     }
 

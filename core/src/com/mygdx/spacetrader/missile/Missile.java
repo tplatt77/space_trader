@@ -107,19 +107,27 @@ public class Missile {
     }
 
     public void draw(SpriteBatch batch) {
+        body.setActive(true);
         sprite.draw(batch);
+
+        // update
         double rotationAngleRadians = (rotationAngle*Math.PI)/180.0 + Math.PI/2;
-        position.x += 2.0f * Math.cos(rotationAngleRadians);
-        position.y += 2.0f * Math.sin(rotationAngleRadians);
-        sprite.setPosition(position.x, position.y);
-        body.setLinearVelocity(position.x, position.y);
+        double deltaX = 2.0f * Math.cos(rotationAngleRadians);
+        position.x += deltaX;
+        double deltaY = 2.0f * Math.sin(rotationAngleRadians);
+        position.y += deltaY;
+        //sprite.setPosition(position.x, position.y);
+        //System.out.println("DeltaX: " + (float) deltaX + " DeltaY: " + (float) deltaY);
+        body.setLinearVelocity((float) deltaX, (float) deltaY);
+        sprite.setPosition((body.getPosition().x) * GameInfo.PPM  - 0.5f*getWidth(),
+                (body.getPosition().y) * GameInfo.PPM - 0.5f*getHeight());
     }
 
     private void createBody() {
 
         BodyDef bodyDef = new BodyDef();
 
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(getX() / GameInfo.PPM, getY() / GameInfo.PPM);
 
         body = world.createBody(bodyDef);
@@ -137,7 +145,7 @@ public class Missile {
         fixtureDef.filter.categoryBits = GameInfo.PLAYER;
         fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE | GameInfo.ASTEROID;
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData("Player");
+        fixture.setUserData("Missile");
 
         shape.dispose();
     }
